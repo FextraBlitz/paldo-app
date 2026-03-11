@@ -15,4 +15,30 @@
   --color-green-800: #016538;
   --color-green-900: #0A5331;
   --color-green-950: #052E16;
+
+  --color-background: #ffffff;
+
+  --color-blue: #0000ff;
+  --color-red: #ff0000;
+
+  --color-error-100: #FFCDD2;
+  --color-error-200: #EF9A9A;
+  --color-error-300: #E57373;
+  --color-error-400: #EF5350;
+  --color-error-500: #F44336;
+  --color-error-600: #E53935;
+}
+
+:root {
+  background-color: var(--color-background);
+}
+
+input {
+  background-color: var(--color-background) !important;
+  color: #000000 !important;
+}
+
+.u-notifications-item {
+  background-color: var(--color-red) !important;
+  border: 1px solid #e2e8f0 !important;
 }
