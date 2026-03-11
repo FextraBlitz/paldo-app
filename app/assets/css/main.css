@@ -15,4 +15,17 @@
   --color-green-800: #016538;
   --color-green-900: #0A5331;
   --color-green-950: #052E16;
+
+  --color-background: #ffffff;
+
+  --color-blue: #0000ff;
+}
+
+:root {
+  background-color: var(--color-background);
+}
+
+input {
+  background-color: var(--color-background) !important;
+  color: #000000 !important;
 }

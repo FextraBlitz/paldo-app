@@ -3,15 +3,26 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui',
-    '@nuxtjs/supabase',
-    '@nuxtjs/tailwindcss'
+    '@nuxtjs/supabase'
   ],
+
+  supabase: {
+    url: process.env.SUPABASE_URL,
+    key: process.env.SUPABASE_KEY,
+    redirect: false
+  },
 
   devtools: {
     enabled: true
   },
 
   css: ['~/assets/css/main.css'],
+
+  postcss: {
+    plugins: {
+      '@tailwindcss/postcss': {},
+    },
+  },
 
   routeRules: {
     '/': { prerender: true }

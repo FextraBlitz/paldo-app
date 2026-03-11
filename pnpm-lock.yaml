@@ -26,6 +26,9 @@ importers:
       nuxt:
         specifier: ^4.3.1
         version: 4.3.1(@parcel/watcher@2.5.6)(@types/node@25.4.0)(@vue/compiler-sfc@3.5.29)(cac@6.7.14)(db0@0.3.4)(eslint@10.0.3(jiti@2.6.1))(ioredis@5.10.0)(lightningcss@1.32.0)(magicast@0.5.2)(optionator@0.9.4)(rollup@4.59.0)(terser@5.46.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.0)(yaml@2.8.2))(vue-tsc@3.2.5(typescript@5.9.3))(yaml@2.8.2)
+      reka-ui:
+        specifier: ^2.9.0
+        version: 2.9.0(vue@3.5.29(typescript@5.9.3))
       tailwindcss:
         specifier: ^4.2.1
         version: 4.2.1
@@ -33,6 +36,9 @@ importers:
       '@nuxt/eslint':
         specifier: ^1.15.2
         version: 1.15.2(@typescript-eslint/utils@8.56.1(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3))(@vue/compiler-sfc@3.5.29)(eslint@10.0.3(jiti@2.6.1))(magicast@0.5.2)(typescript@5.9.3)(vite@7.3.1(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.46.0)(yaml@2.8.2))
+      '@tailwindcss/postcss':
+        specifier: ^4.2.1
+        version: 4.2.1
       eslint:
         specifier: ^10.0.3
         version: 10.0.3(jiti@2.6.1)
@@ -4609,6 +4615,11 @@ packages:
     resolution: {integrity: sha512-8lTKcJhmG+D3UyJxhBnNnW/720sLzm0pbA9AC1MWazmJ5YchJAyTSl+O00xP/kxBmEN0fw5JqWVHguiFmsGjzA==}
     peerDependencies:
       vue: '>= 3.2.0'
+
+  reka-ui@2.9.0:
+    resolution: {integrity: sha512-5dpp80u109iLTbRBu+jhAk8R/877/JN20gYGjb3GsuAgS7E/5QTX5ZxuzWtZAVbChBDYDpXc8pkaQAFpa6s+4w==}
+    peerDependencies:
+      vue: '>= 3.4.0'
 
   replace-in-file@6.3.5:
     resolution: {integrity: sha512-arB9d3ENdKva2fxRnSjwBEXfK1npgyci7ZZuwysgAp7ORjHSyxz6oqIjTEv8R0Ydl4Ll7uOAZXL4vbkhGIizCg==}
@@ -10457,6 +10468,22 @@ snapshots:
       jsesc: 3.1.0
 
   reka-ui@2.8.2(vue@3.5.29(typescript@5.9.3)):
+    dependencies:
+      '@floating-ui/dom': 1.7.6
+      '@floating-ui/vue': 1.1.11(vue@3.5.29(typescript@5.9.3))
+      '@internationalized/date': 3.12.0
+      '@internationalized/number': 3.6.5
+      '@tanstack/vue-virtual': 3.13.21(vue@3.5.29(typescript@5.9.3))
+      '@vueuse/core': 14.2.1(vue@3.5.29(typescript@5.9.3))
+      '@vueuse/shared': 14.2.1(vue@3.5.29(typescript@5.9.3))
+      aria-hidden: 1.2.6
+      defu: 6.1.4
+      ohash: 2.0.11
+      vue: 3.5.29(typescript@5.9.3)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+
+  reka-ui@2.9.0(vue@3.5.29(typescript@5.9.3)):
     dependencies:
       '@floating-ui/dom': 1.7.6
       '@floating-ui/vue': 1.1.11(vue@3.5.29(typescript@5.9.3))
