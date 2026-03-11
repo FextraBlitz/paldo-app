@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { ref, onMounted } from 'vue'
   import SplashScreen from '~/components/splash.vue'
   const isSplashLoading = ref(true)
 
@@ -10,6 +11,10 @@
 </script>
 
 <template>
-  <SplashScreen v-if="isSplashLoading" />
-  <NuxtPage v-else />
+  <ClientOnly>
+    <UApp :toaster="{ position: 'bottom-center' }">
+      <SplashScreen v-if="isSplashLoading" />
+      <NuxtPage v-else />
+    </UApp>
+  </ClientOnly>
 </template>
