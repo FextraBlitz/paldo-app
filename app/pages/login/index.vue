@@ -1,6 +1,6 @@
 <template>
     <div class="flex items-center py-40 h-screen bg-white flex-col gap-2">
-        <div class="text-6xl pt-20 pb-5 font-bold">
+        <div class="text-6xl pt-12 pb-5 font-bold">
             <img src="~/assets/logo.png" alt="Paldo Logo" width="200" height="200" />
         </div>
 
@@ -65,14 +65,46 @@
 <script setup lang="ts">
     import { reactive } from 'vue'
 
+    const supabase = useSupabaseClient()
+    const toast = useToast()
     const state = reactive({
         email: '',
         password: ''
     })
 
     async function onSubmit() {
-        console.log('Logging in with:', state.email)
-        // Your Supabase auth logic will go here
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: state.email,
+                password: state.password
+            })
+            if (error) throw error
+            toast.add({
+                title: 'Welcome Back!',
+                description: 'Login successful. Redirecting...',
+                color: 'neutral',
+                icon: 'i-lucide-check-circle',
+                ui: {
+                    root: 'bg-blue-500 border-2 border-blue-900',
+                    description: 'text-white',
+                    close: 'text-white'
+                }
+            })
+            await navigateTo('/summary')
+
+        }
+        catch (error: any) {
+            toast.add({
+                title: 'Login Failed',
+                description: error.message || 'Invalid email or password.',
+                color: 'neutral',
+                icon: 'i-lucide-x-circle',
+                ui: {
+                    root: 'bg-red-500 border-2 border-red-900',
+                    description: 'text-white',
+                }
+            })
+        }
     }
 </script>
 

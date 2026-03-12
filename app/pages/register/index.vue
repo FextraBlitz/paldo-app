@@ -95,6 +95,7 @@
 </template>
 
 <script setup lang="ts">
+    const supabase = useSupabaseClient()
     const toast = useToast()
     const state = reactive({
         email: '',
@@ -112,7 +113,7 @@
                 color: 'neutral',
                 icon: 'i-lucide-circle-alert',
                 ui: {
-                    root: 'bg-red-700 border-2 border-red-900',
+                    root: 'bg-red-500 border-2 border-red-900',
                     description: 'text-white',
                     close: 'text-white'
                 }
@@ -127,15 +128,52 @@
                 color: 'neutral',
                 icon: 'i-lucide-circle-alert',
                 ui: {
-                    root: 'bg-red-700 border-2 border-red-900',
+                    root: 'bg-red-500 border-2 border-red-900',
                     description: 'text-white',
                     close: 'text-white'
                 }
             })
             return
         }
-        console.log('Registering user:', state.email)
-        // Integration with Supabase auth logic here
+        //console.log('Registering user:', state.email)
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email: state.email,
+                password: state.password,
+                options: {
+                    data: {
+                        full_name: state.name
+                    }
+                }
+            })
+            if (error) throw error
+            
+            toast.add({
+                title: 'Success!',
+                description: 'Pleaase check your email for conformation.',
+                color: 'neutral',
+                icon: 'i-lucide-check-circle',
+                ui: {
+                    root: 'bg-blue-500 border-2 border-blue-900',
+                    description: 'text-white',
+                    close: 'text-white'
+                }
+            })
+            await navigateTo('/login')
+
+        }
+        catch (error: any) {
+            toast.add({
+                title: 'Registration Failed',
+                description: error.message || 'An unexpected error occurred.',
+                color: 'neutral',
+                icon: 'i-lucide-x-circle',
+                ui: {
+                    root: 'bg-red-500 border-2 border-red-900',
+                    description: 'text-white',
+                }
+            })
+        }
     }
 </script>
 
