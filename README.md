@@ -1,9 +1,8 @@
-# ₱alDo
+![Screenshot](app/assets/logo.png)
 Let Your Pal Do the Work
 
 An open-source balance tracker for those who wish to keep track of their spendings and savings.
 
-![Screenshot](app/assets/logo.png)
 
 ## Table of Contents
 
