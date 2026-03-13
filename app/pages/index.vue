@@ -4,7 +4,7 @@
             <img src="~/assets/logo.png" alt="Paldo Logo" width="200" height="200" />
         </div>
         <NuxtLink to="/register">
-            <div class="text-xl bg-red-500 px-16 py-2 text-white border-4 border-red-900">
+            <div class="text-xl bg-red-500 px-16 py-2 text-white border-4 border-red-900 rounded-md">
                 Get Started
             </div>
         </NuxtLink>
