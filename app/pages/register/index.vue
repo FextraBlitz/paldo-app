@@ -135,7 +135,7 @@
             })
             return
         }
-        //console.log('Registering user:', state.email)
+        
         try {
             const { data, error } = await supabase.auth.signUp({
                 email: state.email,
