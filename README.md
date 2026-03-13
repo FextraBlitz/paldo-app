@@ -1,8 +1,7 @@
 ![Screenshot](app/assets/logo.png)
-Let Your Pal Do the Work
+<h1 style="text-align: center;">Let Your Pal Do the Work</h1>
 
-An open-source balance tracker for those who wish to keep track of their spendings and savings.
-
+<p style="text-align: justify;">An open-source balance tracker for those who wish to keep track of their spendings and savings.</p>
 
 ## Table of Contents
 
