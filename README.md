@@ -14,12 +14,12 @@
 ### Currently Available
 - Account registration and login system
 - Historical income and expense record viewing and inputting
+- Adding, editing, and deleting income and expense records
 - Periodic balance calculation based on income and expenses
+- Management of record categories (addition, editing, deletion)
 
 ### Planned Features
-- Record deletion and editing
 - Goals system using historical balance data
-- Record categories with deletion and editing support
 - Graphical analysis of metrics such as income flow, balance summary, and more
 
 ## Technologies Used
