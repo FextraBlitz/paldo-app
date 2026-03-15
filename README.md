@@ -21,6 +21,7 @@
 ### Planned Features
 - Goals system using historical balance data
 - Graphical analysis of metrics such as income flow, balance summary, and more
+- Profile customization and updating
 
 ## Technologies Used
 
