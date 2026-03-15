@@ -1,60 +1,33 @@
-# Nuxt Starter Template
+![Screenshot](app/assets/logo.png)
+<h1 style="text-align: center;">Let Your Pal Do the Work</h1>
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+<p style="text-align: justify;">An open-source balance tracker for those who wish to keep track of their spendings and savings.</p>
 
-Use this template to get started with [Nuxt UI](https://ui.nuxt.com) quickly.
+## Table of Contents
 
-- [Live demo](https://starter-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [License](#license)
 
-<a href="https://starter-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-    <img alt="Nuxt Starter Template" src="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png" width="830" height="466">
-  </picture>
-</a>
+## Features
 
-> The starter template for Vue is on https://github.com/nuxt-ui-templates/starter-vue.
+### Currently Available
+- Account registration and login system
+- Historical income and expense record viewing and inputting
+- Periodic balance calculation based on income and expenses
 
-## Quick Start
+### Planned Features
+- Record deletion and editing
+- Goals system using historical balance data
+- Record categories with deletion and editing support
+- Graphical analysis of metrics such as income flow, balance summary, and more
 
-```bash [Terminal]
-npm create nuxt@latest -- -t github:nuxt-ui-templates/starter
-```
+## Technologies Used
 
-## Deploy your own
+- **Full Stack**: Nuxt
+- **Front End**: Tailwind CSS, Nuxt Charts, Nuxt UI
+- **Database**: Supabase
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=starter&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fstarter&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fstarter-dark.png&demo-url=https%3A%2F%2Fstarter-template.nuxt.dev%2F&demo-title=Nuxt%20Starter%20Template&demo-description=A%20minimal%20template%20to%20get%20started%20with%20Nuxt%20UI.)
+## License
 
-## Setup
-
-Make sure to install the dependencies:
-
-```bash
-pnpm install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-pnpm dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-pnpm build
-```
-
-Locally preview production build:
-
-```bash
-pnpm preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
