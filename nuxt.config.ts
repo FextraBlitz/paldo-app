@@ -9,7 +9,15 @@ export default defineNuxtConfig({
   supabase: {
     url: process.env.SUPABASE_URL,
     key: process.env.SUPABASE_KEY,
-    redirect: false
+    redirect: true,
+    redirectOptions: {
+    login: '/login',
+    callback: '/',
+    include: undefined,
+    exclude: [],
+    saveRedirectToCookie: false,
+  }
+
   },
 
   devtools: {
