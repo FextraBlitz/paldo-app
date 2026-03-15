@@ -34,7 +34,7 @@
                 <UFormField class="w-full">
                     <template #label><span class="font-bold text-slate-700 w-full">Icon</span></template>
                     <div class="space-y-3 mt-1 w-full">
-                        <UInput v-model="iconSearch" icon="i-lucide-search" color="info" placeholder="Search game icons..." size="md" class="w-full" />
+                        <UInput v-model="iconSearch" icon="i-lucide-search" color="info" placeholder="Search icons..." size="md" class="w-full" />
                         
                         <div class="h-42.5 overflow-y-auto grid grid-cols-6 items-start gap-2 p-2 border border-gray-200 rounded-md bg-white shadow-inner relative">
                             <div v-if="loadingIcons" class="col-span-6 flex items-center justify-center py-8 text-xs font-bold text-gray-500 uppercase tracking-widest">
@@ -190,10 +190,7 @@
                 title: 'Missing Information!',
                 description: 'Please enter a category name.',
                 color: 'neutral',
-                ui: {
-                    root: 'bg-red-500 border-2 border-red-900',
-                    description: 'text-white',
-                },
+                ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
                 close: {class: 'text-white'}
             })
             return
@@ -218,10 +215,7 @@
                 title: 'Database Error',
                 description: error.message,
                 color: 'neutral',
-                ui: {
-                    root: 'bg-red-500 border-2 border-red-900',
-                    description: 'text-white',
-                },
+                ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
                 close: {class: 'text-white'}
             })
         } else {
@@ -229,10 +223,7 @@
                 title: 'Success',
                 description: 'Category updated!',
                 color: 'neutral',
-                ui: {
-                    root: 'bg-blue-500 border-2 border-blue-900',
-                    description: 'text-white',
-                },
+                ui: {root: 'bg-blue-500 border-2 border-blue-900', description: 'text-white'},
                 close: {class: 'text-white'}
             })
             isOpen.value = false 

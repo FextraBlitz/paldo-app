@@ -179,10 +179,7 @@
                 title: 'Icon Error',
                 description: 'Could not load the full icon library.',
                 color: 'neutral',
-                ui: {
-                    root: 'bg-red-500 border-2 border-red-900',
-                    description: 'text-white',
-                },
+                ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
                 close: {class: 'text-white'}
             })
         }
@@ -210,10 +207,7 @@
                 title:'Missing information!',
                 description: 'Please enter a name for your category.',
                 color: 'neutral',
-                ui: {
-                    root: 'bg-red-500 border-2 border-red-900',
-                    description: 'text-white',
-                },
+                ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
                 close: {class: 'text-white'}
             })
             return
@@ -226,10 +220,7 @@
                 title: 'Auth Error',
                 description: 'Could not verify your session. Please log in again.',
                 color: 'neutral',
-                ui: {
-                    root: 'bg-red-500 border-2 border-red-900',
-                    description: 'text-white',
-                },
+                ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
                 close: {class: 'text-white'}
             })
             loading.value = false
@@ -247,10 +238,7 @@
                 title: 'Error',
                 description: 'Could not find your log.',
                 color: 'neutral',
-                ui: {
-                    root: 'bg-red-500 border-2 border-red-900',
-                    description: 'text-white',
-                },
+                ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
                 close: {class: 'text-white'}
             })
             loading.value = false
@@ -273,10 +261,7 @@
                 title: 'Database Error',
                 description: error.message,
                 color: 'neutral',
-                ui: {
-                    root: 'bg-red-500 border-2 border-red-900',
-                    description: 'text-white',
-                },
+                ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
                 close: {class: 'text-white'}
             })
         }
@@ -285,10 +270,7 @@
                 title: 'Success',
                 description: 'Category created!',
                 color: 'neutral',
-                ui: {
-                    root: 'bg-blue-500 border-2 border-blue-900',
-                    description: 'text-white',
-                },
+                ui: {root: 'bg-blue-500 border-2 border-blue-900', description: 'text-white'},
                 close: {class: 'text-white'}
             })
             isOpen.value = false 

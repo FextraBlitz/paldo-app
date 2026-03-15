@@ -46,11 +46,22 @@
                             <div class="text-xs text-slate-700">Cash</div>
                         </div>
                         
-                        <div 
-                            class="font-medium" 
-                            :class="entry.e_type?.toUpperCase() === 'I' ? 'text-green-500' : 'text-red-500'"
-                        >
-                            {{ entry.e_type?.toUpperCase() === 'E' ? '- ₱' : '+ ₱' }} {{ Number(entry.e_amount).toFixed(2) }}
+                        <div class="flex items-center gap-2">
+                            <div 
+                                class="font-medium" 
+                                :class="entry.e_type?.toUpperCase() === 'I' ? 'text-green-500' : 'text-red-500'"
+                            >
+                                {{ entry.e_type?.toUpperCase() === 'E' ? '- ₱' : '+ ₱' }} {{ Number(entry.e_amount).toFixed(2) }}
+                            </div>
+                            
+                            <UDropdownMenu 
+                                :items="getDropdownItems(entry)"
+                                :ui="{
+                                    content: 'bg-white ring-0 border border-slate-300 shadow-lg rounded-md'
+                                }"
+                            >
+                                <UButton variant="ghost" color="neutral" icon="i-lucide-more-horizontal" class="text-slate-400" />
+                            </UDropdownMenu>
                         </div>
                     </div>
 
@@ -63,12 +74,12 @@
 
         <div class="fixed bottom-16 w-full grid grid-cols-3 bg-white border-t border-t-red-900 text-center text-[10px] font-bold py-2 uppercase">
             <div class="border-r border-red-900">
-                <div class="text-blue-500">Expenses</div>
-                <div class="text-sm text-green-500">₱ {{ periodExpenses.toFixed(2) }}</div>
+                <div class="text-blue-500">Income</div>
+                <div class="text-sm text-green-500">₱ {{ periodIncome.toFixed(2) }}</div>
             </div>
             <div class="border-r border-red-900">
-                <div class="text-blue-500">Income</div>
-                <div class="text-sm text-red-500">₱ {{ periodIncome.toFixed(2) }}</div>
+                <div class="text-blue-500">Expenses</div>
+                <div class="text-sm text-red-500">₱ {{ periodExpenses.toFixed(2) }}</div>
             </div>
             <div>
                 <div class="text-blue-500">Total</div>
@@ -80,6 +91,16 @@
 
         <Footer />
         <AddEntry @created="fetchEntries" />
+        <EditEntry 
+            v-model:open="isEditModalOpen" 
+            :entry="selectedEntry" 
+            @updated="fetchEntries" 
+        />
+        <DeleteEntry 
+            v-model:open="isDeleteModalOpen" 
+            :entry="selectedEntry" 
+            @deleted="fetchEntries" 
+        />
     </div>
 </template>
 
@@ -87,6 +108,8 @@
     import Header from '~/components/header.vue';
     import Footer from '~/components/footer.vue';
     import AddEntry from '~/components/add_entry.vue'
+    import EditEntry from '~/components/edit_entry.vue';
+    import DeleteEntry from '~/components/delete_entry.vue';
     import { ref, computed, onMounted } from 'vue'
     import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, eachDayOfInterval, addDays, subDays, addMonths, subMonths } from 'date-fns'
 
@@ -95,6 +118,9 @@
     const currentDate = ref(new Date())
     const viewMode = ref('weekly')
     const searchQuery = ref('')
+    const isEditModalOpen = ref(false)
+    const isDeleteModalOpen = ref(false)
+    const selectedEntry = ref<any>(null)
 
     const filterOptions = [
         [
@@ -102,6 +128,27 @@
             { label: 'Weekly', onSelect: () => { viewMode.value = 'weekly' } },
             { label: 'Monthly', onSelect: () => { viewMode.value = 'monthly' } }
         ]
+    ]
+
+    const getDropdownItems = (entry: any) => [
+        [{
+            label: 'Edit',
+            icon: 'i-lucide-pencil',
+            color: 'info',
+            onSelect: () => {
+                selectedEntry.value = entry
+                isEditModalOpen.value = true
+            }
+        },
+        {
+            label: 'Delete',
+            icon: 'i-lucide-trash-2',
+            color: 'error',
+            onSelect: () => {
+                selectedEntry.value = entry
+                isDeleteModalOpen.value = true
+            }
+        }]
     ]
 
     const filteredEntries = computed(() => {
@@ -127,6 +174,7 @@
                 e_type,
                 e_amount,
                 e_date,
+                category_id,
                 CATEGORY (c_name, c_color, c_icon)
             `)
             .order('e_date', { ascending: false })
