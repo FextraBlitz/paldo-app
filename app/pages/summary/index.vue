@@ -1,6 +1,6 @@
 <template>
     <div class="min-h-screen bg-white pb-32">
-        <Header />
+        <Header v-model="searchQuery" />
 
         <div class="bg-white border-b flex items-center justify-center px-4 py-2 text-sm font-medium text-black">
             <div class="flex items-center gap-4">
@@ -9,7 +9,14 @@
                 <UButton variant="ghost" icon="i-lucide-chevron-right" size="md" color="error" @click="nextPeriod"/>
             </div>
             
-            <UDropdownMenu :items="filterOptions" :popper="{ placement: 'bottom-end' }">
+            <UDropdownMenu
+                :items="filterOptions"
+                :popper="{ placement: 'bottom-end' }"
+                :ui="{ 
+                    content: 'bg-white ring-0 border border-slate-300 shadow-lg rounded-md',
+                    item: 'text-red-500 hover:text-red-500'
+                }"
+            >
                 <UButton variant="ghost" icon="i-lucide-list-filter" size="md" color="error" />
             </UDropdownMenu>
         </div>
@@ -26,8 +33,11 @@
                         :key="entry.entry_id"
                         class="flex items-center px-4 py-3 gap-4 border-b last:border-0"
                     >
-                        <div class="w-9 h-9 p-2 flex items-center justify-center text-2xl bg-blue-500 rounded-full">
-                            <UIcon name="i-lucide-receipt" class="w-8 h-8 text-white" />
+                        <div 
+                            class="flex items-center justify-center w-8 h-8 rounded-full"
+                            :style="{ backgroundColor: entry.CATEGORY?.c_color || 'slategray' }"
+                        >
+                            <UIcon :name="entry.CATEGORY?.c_icon || 'i-game-icons-two-coins'" class="w-7.5 h-7.5 text-white" />
                         </div>
                         <div class="flex-1">
                             <div class="font-bold text-slate-700 leading-tight">
@@ -69,30 +79,41 @@
         </div>
 
         <Footer />
-        <EntryWidget @created="fetchEntries" />
+        <AddEntry @created="fetchEntries" />
     </div>
 </template>
 
 <script setup lang="ts">
     import Header from '~/components/header.vue';
     import Footer from '~/components/footer.vue';
-    import EntryWidget from '~/components/entry_widget.vue'
+    import AddEntry from '~/components/add_entry.vue'
     import { ref, computed, onMounted } from 'vue'
     import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, eachDayOfInterval, addDays, subDays, addMonths, subMonths } from 'date-fns'
 
     const supabase = useSupabaseClient()
     const entries = ref<any[]>([])
-
     const currentDate = ref(new Date())
     const viewMode = ref('weekly')
+    const searchQuery = ref('')
 
     const filterOptions = [
         [
-            { label: 'Daily', click: () => { viewMode.value = 'daily' } },
-            { label: 'Weekly', click: () => { viewMode.value = 'weekly' } },
-            { label: 'Monthly', click: () => { viewMode.value = 'monthly' } }
+            { label: 'Daily', onSelect: () => { viewMode.value = 'daily' } },
+            { label: 'Weekly', onSelect: () => { viewMode.value = 'weekly' } },
+            { label: 'Monthly', onSelect: () => { viewMode.value = 'monthly' } }
         ]
     ]
+
+    const filteredEntries = computed(() => {
+        if (!searchQuery.value) return entries.value
+        
+        const query = searchQuery.value.toLowerCase()
+        
+        return entries.value.filter(entry => {
+            const categoryName = entry.CATEGORY?.c_name || 'Uncategorized'
+            return categoryName.toLowerCase().includes(query)
+        })
+    })
 
     onMounted(() => {
         fetchEntries()
@@ -106,7 +127,7 @@
                 e_type,
                 e_amount,
                 e_date,
-                CATEGORY ( c_name )
+                CATEGORY (c_name, c_color, c_icon)
             `)
             .order('e_date', { ascending: false })
 
@@ -125,7 +146,7 @@
     function getEntriesForDay(day: Date) {
         const dateString = format(day, 'yyyy-MM-dd')
         
-        return entries.value.filter(entry => {
+        return filteredEntries.value.filter(entry => {
             if (!entry.e_date) return false;
             return entry.e_date.startsWith(dateString)
         })
@@ -167,7 +188,7 @@
     const visibleEntries = computed(() => {
         const visibleDates = new Set(daysInRange.value.map(day => format(day, 'yyyy-MM-dd')))
         
-        return entries.value.filter(entry => {
+        return filteredEntries.value.filter(entry => {
             if (!entry.e_date) return false
             const entryDate = entry.e_date.substring(0, 10) 
             return visibleDates.has(entryDate)
