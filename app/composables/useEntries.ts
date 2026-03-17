@@ -1,0 +1,47 @@
+import type { Ref } from 'vue'
+
+export const useEntries = (startDate?: Ref<string | null>, endDate?: Ref<string | null>) => {
+  const supabase = useSupabaseClient()
+  const user = useSupabaseUser()
+
+  return useAsyncData('user-entries', async () => {
+    // Handling the 'sub' vs 'id' quirk confirmed in your logs
+    const userId = user.value?.id || (user.value as any)?.sub
+    if (!userId) return []
+
+    let query = supabase
+      .from('ENTRY')
+      .select(`
+        entry_id,
+        e_type,
+        e_amount,
+        e_date,
+        log_id,
+        CATEGORY ( c_name ),
+        LOG!inner ( user_id )
+      `)
+      // Filter by the user_id inside the LOG table
+      .eq('LOG.user_id', userId)
+      .order('e_date', { ascending: false })
+
+    // Apply date range filters if they exist
+    if (startDate?.value) query = query.gte('e_date', startDate.value)
+    if (endDate?.value) query = query.lte('e_date', endDate.value)
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('Error fetching entries:', error.message)
+      throw error
+    }
+
+    return data || []
+  }, {
+    // Watchers using getter functions to avoid TypeScript "WatchSource" errors
+    watch: [
+      () => user.value,
+      () => startDate?.value,
+      () => endDate?.value
+    ]
+  })
+}
