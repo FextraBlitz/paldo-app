@@ -112,11 +112,8 @@
                 description: 'You must accept the Terms and Conditions to register.',
                 color: 'neutral',
                 icon: 'i-lucide-circle-alert',
-                ui: {
-                    root: 'bg-red-500 border-2 border-red-900',
-                    description: 'text-white',
-                    close: 'text-white'
-                }
+                ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
+				close: {class: 'text-white'}
             })
             return
         }
@@ -127,11 +124,8 @@
                 description: 'Your passwords do not match. Please try again.',
                 color: 'neutral',
                 icon: 'i-lucide-circle-alert',
-                ui: {
-                    root: 'bg-red-500 border-2 border-red-900',
-                    description: 'text-white',
-                    close: 'text-white'
-                }
+                ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
+				close: {class: 'text-white'}
             })
             return
         }
@@ -153,11 +147,8 @@
                 description: 'Pleaase check your email for conformation.',
                 color: 'neutral',
                 icon: 'i-lucide-check-circle',
-                ui: {
-                    root: 'bg-blue-500 border-2 border-blue-900',
-                    description: 'text-white',
-                    close: 'text-white'
-                }
+                ui: {root: 'bg-blue-500 border-2 border-blue-900', description: 'text-white'},
+				close: {class: 'text-white'}
             })
             await navigateTo('/login')
 
@@ -168,10 +159,8 @@
                 description: error.message || 'An unexpected error occurred.',
                 color: 'neutral',
                 icon: 'i-lucide-x-circle',
-                ui: {
-                    root: 'bg-red-500 border-2 border-red-900',
-                    description: 'text-white',
-                }
+                ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
+				close: {class: 'text-white'}
             })
         }
     }

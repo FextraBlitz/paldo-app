@@ -84,11 +84,8 @@
 				description: 'Login successful. Redirecting...',
 				color: 'neutral',
 				icon: 'i-lucide-check-circle',
-				ui: {
-					root: 'bg-blue-500 border-2 border-blue-900',
-					description: 'text-white',
-					close: 'text-white'
-				}
+				ui: {root: 'bg-blue-500 border-2 border-blue-900', description: 'text-white'},
+				close: {class: 'text-white'}
 			})
 			localStorage.setItem('isLoggedIn', 'true')
 			await navigateTo('/summary')
@@ -100,10 +97,8 @@
 				description: error.message || 'Invalid email or password.',
 				color: 'neutral',
 				icon: 'i-lucide-x-circle',
-				ui: {
-					root: 'bg-red-500 border-2 border-red-900',
-					description: 'text-white',
-				}
+				ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
+				close: {class: 'text-white'}
 			})
 		}
 	}
