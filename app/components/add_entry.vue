@@ -5,6 +5,7 @@
                 icon="i-lucide-plus"
                 size="xl"
                 color="error"
+                solid
                 class="rounded-full w-14 h-14 border-4 border-red-900 bg-red text-white flex items-center justify-center p-0"
             />
         </div>

@@ -60,7 +60,7 @@
                                     content: 'bg-white ring-0 border border-slate-300 shadow-lg rounded-md'
                                 }"
                             >
-                                <UButton variant="ghost" color="neutral" icon="i-lucide-more-horizontal" class="text-slate-400" />
+                                <UButton variant="ghost" color="error" icon="i-lucide-more-horizontal" class="text-slate-400" />
                             </UDropdownMenu>
                         </div>
                     </div>
