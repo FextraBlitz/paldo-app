@@ -28,7 +28,22 @@
         <span>{{ scale }}</span>
       </div>
     </section>
-    
+    <!-- NEW: Report button section -->
+    <div class="flex items-center justify-center gap-3 py-4 flex-wrap">
+      <USelectMenu
+        v-model="reportPeriod"
+        :options="periodOptions"
+        placeholder="Select period"
+      />
+      <UButton
+        color="primary"
+        :loading="isSendingReport"
+        :disabled="isSendingReport || !hasData"
+        @click="sendReport"
+      >
+        Send Report
+      </UButton>
+    </div>
   </div>
 </template>
 
@@ -62,7 +77,7 @@ const colorMap: Record<scaleMode, string> = {
   income: 'rgb(123, 122, 77)'
 }
 
-const activeChart = ref<chartMode>('total')
+const activeChart = ref<chartMode>('time')
 const activeScales = ref<Set<scaleMode>>(new Set(['totals', 'income', 'expenses'])) // Default all on
 
 const switchChart = (newChart: chartMode) => {
@@ -104,20 +119,91 @@ const bar_data_values = computed(() => {
   return result
 })
 
+const lastOfDailyEntries = (entries: FormattedEntry[]) => {
+  const result: Record<number, number> = {}
+  const daily_groups = groupEntriesByDay(entries)
+  for (const [day, dayEntries] of Object.entries(daily_groups)) {
+    // For totals/balance, we want the state at the end of the day
+    result[parseInt(day)] = dayEntries.at(-1)?.amount ?? 0
+  }
+  return result
+}
 
+// --- LINE CHART DATA ---
+
+const allTimestamps = computed(() => {
+  const timestamps = new Set<number>()
+
+  // Collect every day that has ANY transaction (expenses, income, or totals)
+  ;['expenses' as const, 'income' as const, 'totals' as const].forEach(scale => {
+    const entries = props.entry_data[scale] || []
+    entries.forEach(e => {
+      if (e?.date) timestamps.add(msToDay(e.date.getTime()))
+    })
+  })
+
+  return Array.from(timestamps).sort((a, b) => a - b)
+})
+
+const ensureEnoughPoints = (dailyMap: Record<number, number>, allTimestamps: number[]) => {
+  const values = allTimestamps.map(t => dailyMap[t] ?? null)
+  const nonNullValues = values.filter(v => v !== null)
+
+  // If 0 or 1 real data point → duplicate to force horizontal line
+  if (nonNullValues.length <= 1) {
+    // Find the single value (or default to 0)
+    const singleValue = nonNullValues[0] ?? 0
+
+    // Create two points with same value but different x (first + last timestamp)
+    if (allTimestamps.length >= 2) {
+      const newData = allTimestamps.map((t, i) => {
+        // Put the value at start and end, nulls in between if any
+        if (i === 0 || i === allTimestamps.length - 1) return singleValue
+        return null
+      })
+      return newData
+    }
+    // If only one timestamp total → can't duplicate → just return original
+  }
+
+  return allTimestamps.map(t => dailyMap[t] ?? null)
+}
+
+// Pre-compute sorted daily maps using your exact functions
+const dailyExpenses = computed(() => sortDailyEntries(sumOfDailyEntries(props.entry_data.expenses || [])))
+const dailyIncome    = computed(() => sortDailyEntries(sumOfDailyEntries(props.entry_data.income || [])))
+const dailyTotals    = computed(() => sortDailyEntries(lastOfDailyEntries(props.entry_data.totals || [])))
 // --- LINE CHART DATA (TIME) ---
 // 2. Reactive Line Data
-const line_data = computed(() => ({
-  labels: props.entry_data.totals.map(e => e.id),
-  datasets: Array.from(activeScales.value).map(scale => ({
-    label: scale.toUpperCase(),
-    data: props.entry_data[scale].map(e => e.amount),
-    borderColor: colorMap[scale],
-    tension: 0.1,
-    fill: false
-  }))
-}))
+const line_labels = computed(() => Object.entries(sumOfDailyEntries(props.entry_data['totals'])).map(e => (new Date(parseInt(e[0]))).toLocaleDateString('en-US', {month: '2-digit',day: '2-digit'})))
+const line_data = computed(() => {
+  const labels = allTimestamps.value.map(t =>
+    new Date(t).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' })
+  )
 
+  const datasets = Array.from(activeScales.value).map(scale => {
+    let dailyMap: Record<number, number> = {}
+    if (scale === 'expenses') dailyMap = dailyExpenses.value
+    else if (scale === 'income')    dailyMap = dailyIncome.value
+    else if (scale === 'totals')    dailyMap = dailyTotals.value
+
+    // Apply the "ensure horizontal line" transformation
+    const data = ensureEnoughPoints(dailyMap, allTimestamps.value)
+
+    return {
+      label: scale.toUpperCase(),
+      data: data,
+      borderColor: colorMap[scale],
+      tension: 0.1,
+      fill: false,
+      spanGaps: scale === 'totals',          // still connect balance across gaps
+      pointRadius: data.length <= 2 ? 4 : 3, // bigger dots when few points
+      pointHoverRadius: 6,
+    }
+  })
+  console.log(props.entry_data.totals)
+  return { labels, datasets }
+})
 // 3. Reactive Bar Data
 const bar_data = computed(() => {
   const activeKeys = Array.from(activeScales.value)
@@ -151,6 +237,96 @@ const options = {
     legend: {
       display: false,
     }
+  }
+}
+
+const user = useSupabaseUser() // assuming you already have this somewhere
+const isSendingReport = ref(false)
+const hasData = computed(() => 
+  props.entry_data?.totals?.length > 0 || 
+  props.entry_data?.income?.length > 0 || 
+  props.entry_data?.expenses?.length > 0
+)
+
+const reportPeriod = ref('last-30-days')
+const periodOptions = [
+  { label: 'Last 7 days', value: 'last-7-days' },
+  { label: 'Last 30 days', value: 'last-30-days' },
+  { label: 'This month',   value: 'this-month' },
+  { label: 'Last month',   value: 'last-month' }
+]
+const toast = useToast()
+
+const sendReport = async () => {
+  if (!user.value?.id || !user.value?.email) {
+    toast.add({
+      title: 'Error',
+      description: 'You must be logged in to send a report',
+      color: 'neutral',
+      ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
+      close: {class: 'text-white'}
+    })
+    return
+  }
+
+  if (!hasData.value) {
+    toast.add({
+      title: 'Error',
+      description: 'No financial data available for this period',
+      color: 'neutral',
+      ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
+      close: {class: 'text-white'}
+    })
+    return
+  }
+
+  isSendingReport.value = true
+
+  try {
+    const res = await fetch('/api/report', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: user.value.id,
+        email: user.value.email,
+        period: 'last-30-days'   // ← you can make this dynamic later
+      })
+    })
+
+    const json = await res.json()
+
+    if (json.success) {
+      toast.add({
+        title: 'Success',
+        description: 'Report sent successfully! Check your email.',
+        color: 'neutral',
+        ui: {root: 'bg-blue-500 border-2 border-blue-900', description: 'text-white'},
+        close: {class: 'text-white'}
+      })
+      
+    } else {
+      console.error('Report error:', json)
+      toast.add({
+        title: 'Error',
+        description: 'Failed to send report: ' + (json.error || 'Unknown error'),
+        color: 'neutral',
+        ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
+        close: {class: 'text-white'}
+      })
+    }
+  } catch (err) {
+    console.error('Fetch error:', err)
+    toast.add({
+      title: 'Error',
+      description: 'Error connecting to report service',
+      color: 'neutral',
+      ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
+      close: {class: 'text-white'}
+    })
+  } finally {
+    isSendingReport.value = false
   }
 }
 

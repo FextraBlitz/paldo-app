@@ -1,0 +1,15 @@
+{
+  "functions": {
+    "api/report.php": {
+      "runtime": "vercel-php@0.9.0",
+      "memory": 1024,
+      "maxDuration": 120
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/report",
+      "dest": "/api/report.php"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ export const useEntries = (startDate?: Ref<string | null>, endDate?: Ref<string 
   const supabase = useSupabaseClient()
   const user = useSupabaseUser()
 
-  return useAsyncData('user-entries', async () => {
+  return useAsyncData(`user-entries-${startDate?.value}-${endDate?.value}`, async () => {
     // Handling the 'sub' vs 'id' quirk confirmed in your logs
     const userId = user.value?.id || (user.value as any)?.sub
     if (!userId) return []
@@ -27,7 +27,7 @@ export const useEntries = (startDate?: Ref<string | null>, endDate?: Ref<string 
     // Apply date range filters if they exist
     if (startDate?.value) query = query.gte('e_date', startDate.value)
     if (endDate?.value) query = query.lte('e_date', endDate.value)
-
+    console.log('se', startDate?.value, endDate?.value)
     const { data, error } = await query
 
     if (error) {

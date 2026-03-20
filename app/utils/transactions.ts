@@ -28,7 +28,7 @@ export const groupEntriesByDay = (entries: FormattedEntry[]) => {
       result[time].push(entry)
     }
   }
-  console.log(result)
+  // console.log(result)
   return result
 }
 

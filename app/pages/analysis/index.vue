@@ -9,9 +9,9 @@
           <UButton variant="ghost" icon="i-lucide-chevron-right" size="md" color="error" @click="nextPeriod"/>
       </div>
       
-      <UDropdownMenu :items="filterOptions" :popper="{ placement: 'bottom-end' }">
+      <USelect @update:open="console.log(viewMode)" v-model="viewMode" trailing-icon="none" :items="filterOptions" :popper="{ placement: 'bottom-end' }" :ui="{trailing:'hidden', base:'pe-0.5 px-0.5 py-0.5 bg-transparent', content: 'w-fit bg-white', item: 'text-red-500'}">
           <UButton variant="ghost" icon="i-lucide-list-filter" size="md" color="error" />
-      </UDropdownMenu>
+      </USelect>
     </section>
 
     <section class="flex flex-wrap *:flex-1 *:min-w-[50%] *:ring-1 *:rounded-none *:ring-black *:justify-center *:text-white">
@@ -29,11 +29,11 @@
     <div class="fixed bottom-16 w-full grid grid-cols-3 bg-white border-t border-t-red-900 text-center text-[10px] font-bold py-2 uppercase">
       <div class="border-r border-red-900">
         <div class="text-blue-500">Expenses</div>
-        <div class="text-sm text-green-500">₱ {{ periodExpenses?.toFixed(2) ?? 0 }}</div>
+        <div class="text-sm text-green-500">₱ {{ periodExpenses.toFixed(2) }}</div>
       </div>
       <div class="border-r border-red-900">
         <div class="text-blue-500">Income</div>
-        <div class="text-sm text-red-500">₱ {{ periodIncome?.toFixed(2) ?? 0 }}</div>
+        <div class="text-sm text-red-500">₱ {{ periodIncome.toFixed(2) }}</div>
       </div>
       <div>
         <div class="text-blue-500">Total</div>
@@ -58,16 +58,22 @@
   import FlowIncome from '~/components/charts/flow_income.vue';
   import FlowExpenses from '~/components/charts/flow_expenses.vue';
   import AnalysisAccount from '~/components/charts/analysis_account.vue';
+  import type { SelectItem } from '@nuxt/ui'
 
   // const entries = ref<any[]>([])
   
+  const currentDate = ref(new Date())
+  const viewMode = ref('weekly')
   const daysInRange = computed(() => {
     if (viewMode.value === 'daily') {
-      return [currentDate.value]
+      const next_day = new Date(currentDate.value)
+      next_day.setDate(next_day.getDate() + 1)
+      return [currentDate.value, next_day]
     }
     if (viewMode.value === 'weekly') {
       const start = startOfWeek(currentDate.value, { weekStartsOn: 0 })
       const end   = endOfWeek(currentDate.value, { weekStartsOn: 0 })
+      end.setDate(end.getDate() + 1)
       return eachDayOfInterval({ start, end })
     }
     if (viewMode.value === 'monthly') {
@@ -80,11 +86,13 @@
 
   const startDate = computed(() => {
     const date = daysInRange.value?.[0]
+    console.log('stard', date);
     return date ? format(date, 'yyyy-MM-dd') : null
   })
 
   const endDate = computed(() => {
     const date = daysInRange.value?.[daysInRange.value.length - 1]
+    console.log('end', date);
     return date ? format(date, 'yyyy-MM-dd') : null
   })
   
@@ -95,8 +103,6 @@
   
   console.log('rawr', category_data.value)
 
-  const currentDate = ref(new Date())
-  const viewMode = ref('weekly')
   type viewModes = 'overview-expenses' | 'overview-income' | 'flow-expenses' | 'flow-income' | 'analysis-account'
 
   const ChartComponents: Record<viewModes, Component> = {
@@ -115,17 +121,16 @@
   const refreshValues = () => {
     refreshEntries()
     refreshCategories()
-    console.log('entries', entries.value)
-    console.log('categories', category_data.value)
+    // console.log('entries', entries.value)
+    // console.log('categories', category_data.value)
   }
   
-  const filterOptions = [
-    [
-      { label: 'Daily', click: () => { viewMode.value = 'daily' } },
-      { label: 'Weekly', click: () => { viewMode.value = 'weekly' } },
-      { label: 'Monthly', click: () => { viewMode.value = 'monthly' } }
-    ]
-  ]
+  const filterOptions = ref<SelectItem[]>([
+    {label: 'Daily', value: 'daily'},
+    {label: 'Weekly', value: 'weekly'},
+    {label: 'Monthly', value: 'monthly'},
+    
+    ])
 
 
   const dateRangeDisplay = computed(() => {
@@ -145,12 +150,15 @@
   })
 
   const visibleEntries = computed(() => {
+    // Use a fallback to prevent .map of undefined error
     const days = daysInRange.value || []
-    const visibleDates = new Set((daysInRange.value || []).map(day => format(day, 'yyyy-MM-dd')))
+    const visibleDates = new Set(days.map(day => format(day, 'yyyy-MM-dd')))
     
+    // CRITICAL: If entries are null (fetching), return empty array so stats remain 0 
+    // rather than throwing the 'filter of undefined' error
     if (!entries.value) return []
 
-    return entries.value!.filter(entry => {
+    return entries.value.filter(entry => {
       if (!entry.e_date) return false
       const entryDate = entry.e_date.substring(0, 10) 
       return visibleDates.has(entryDate)
@@ -158,14 +166,10 @@
   })
 
   const periodIncome = computed(() => {
-    return visibleEntries.value
-    .filter(e => e.e_type?.toUpperCase() === 'I')
-    .reduce((sum, e) => sum + Number(e.e_amount), 0)
+    return visibleEntries.value.filter(e => {console.log('aawaw'); return e.e_type?.toUpperCase() === 'I'}).reduce((sum, e) => {console.log(e, 'bla') ;return sum + Number(e.e_amount)}, 0)
   })
   const periodExpenses = computed(() => {
-    return visibleEntries.value
-    .filter(e => e.e_type?.toUpperCase() === 'E')
-    .reduce((sum, e) => sum + Number(e.e_amount), 0)
+    return visibleEntries.value.filter(e => e.e_type?.toUpperCase() === 'E').reduce((sum, e) => sum + Number(e.e_amount), 0)
   })
   const periodBalance = computed(() => {
     return periodIncome.value - periodExpenses.value
@@ -183,6 +187,6 @@
     else currentDate.value = subDays(currentDate.value, 7)
     refreshEntries()
     refreshValues()
-    console.log(entries.value)
+    // console.log(entries.value)
   }
 </script>
