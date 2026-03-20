@@ -1,6 +1,6 @@
 export const useCategoryStyles = () => {
   // 1. Reuse existing composables to maintain the "Chain of Cohesion"
-  const { data: categories, status } = useCategories()
+  const { data: categories, refresh, status } = useCategories()
   const { data: names } = useCategoryNames()
 
   // 2. Map styles to names, preserving the order from useCategoryNames
@@ -26,6 +26,7 @@ export const useCategoryStyles = () => {
 
   return {
     styles,
+    refresh,
     pending: computed(() => status.value === 'pending')
   }
 }
