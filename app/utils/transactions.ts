@@ -21,7 +21,7 @@ export const groupEntriesByDay = (entries: FormattedEntry[]) => {
   for (const entry of entries) {
     if (entry) {
       const time = msToDay(entry.date.getTime())
-      console.log(entry ,time)
+      // console.log(entry ,time)
       if (!result[time]) {
         result[time] = []
       }

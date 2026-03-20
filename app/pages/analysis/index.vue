@@ -64,32 +64,32 @@
   const daysInRange = computed(() => {
     if (viewMode.value === 'daily') {
       return [currentDate.value]
-    } 
-    else if (viewMode.value === 'weekly') {
+    }
+    if (viewMode.value === 'weekly') {
       const start = startOfWeek(currentDate.value, { weekStartsOn: 0 })
-      const end = endOfWeek(currentDate.value, { weekStartsOn: 0 })
-      return eachDayOfInterval({ start, end }).reverse()
-    } 
-    else if (viewMode.value === 'monthly') {
+      const end   = endOfWeek(currentDate.value, { weekStartsOn: 0 })
+      return eachDayOfInterval({ start, end })
+    }
+    if (viewMode.value === 'monthly') {
       const start = startOfMonth(currentDate.value)
-      const end = endOfMonth(currentDate.value)
-      return eachDayOfInterval({ start, end }).reverse()
+      const end   = endOfMonth(currentDate.value)
+      return eachDayOfInterval({ start, end })
     }
     return []
   })
 
   const startDate = computed(() => {
-    const date = daysInRange.value?.[daysInRange.value.length - 1]
+    const date = daysInRange.value?.[0]
     return date ? format(date, 'yyyy-MM-dd') : null
   })
 
   const endDate = computed(() => {
-    const date = daysInRange.value?.[0]
+    const date = daysInRange.value?.[daysInRange.value.length - 1]
     return date ? format(date, 'yyyy-MM-dd') : null
   })
   
   const { data: categories, pending: pendingCategories, refresh: refreshCategories } = await useCategories()
-  const { data: entries, pending: pendingEntries, refresh: refreshEntries } = await useEntries(startDate, endDate)
+  const { data: entries, pending: pendingEntries, refresh: refreshEntries } = useEntries(startDate, endDate)
   const { data: category_data } = useCategorySums(startDate, endDate)
   const { data: formatted_entries } = useFormattedEntries(startDate, endDate)
   
@@ -183,5 +183,6 @@
     else currentDate.value = subDays(currentDate.value, 7)
     refreshEntries()
     refreshValues()
+    console.log(entries.value)
   }
 </script>
