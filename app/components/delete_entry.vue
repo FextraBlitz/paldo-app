@@ -15,7 +15,7 @@
                         Are you sure you want to permanently delete this transaction?
                     </p>
                     
-                    <div v-if="entry" class="bg-white p-3 rounded-md border border-gray-200 shadow-sm inline-block mx-auto text-left min-w-[200px]">
+                    <div v-if="entry" class="bg-white p-3 rounded-md border border-gray-200 shadow-sm inline-block mx-auto text-left min-w-50">
                         <div class="text-xs text-gray-500 font-bold uppercase mb-1">{{ entry.CATEGORY?.c_name || 'Transaction' }}</div>
                         <div class="font-bold text-lg" :class="entry.e_type?.toUpperCase() === 'I' ? 'text-green-600' : 'text-red-600'">
                             {{ entry.e_type?.toUpperCase() === 'E' ? '- ₱' : '+ ₱' }} {{ Number(entry.e_amount).toFixed(2) }}
@@ -52,10 +52,13 @@
 
         loading.value = true
 
+        const { data: { user } } = await supabase.auth.getUser()
+        const { data: logData } = await supabase.from('LOG').select('log_id').eq('user_id', user?.id).single()
         const { error } = await supabase
             .from('ENTRY')
             .delete()
             .eq('entry_id', props.entry.entry_id)
+        if (!error && logData) await updateLogTotals(logData.log_id)
 
         loading.value = false
 
@@ -80,5 +83,32 @@
             isOpen.value = false
             emit('deleted') 
         }
+    }
+
+    async function updateLogTotals(logId: string) {
+        const { data: allEntries } = await supabase
+            .from('ENTRY')
+            .select('e_type, e_amount')
+            .eq('log_id', logId)
+
+        if (!allEntries) return
+
+        let income = 0
+        let expense = 0
+
+        allEntries.forEach((entry: any) => {
+            if (entry.e_type?.toLowerCase() === 'i') income += Number(entry.e_amount)
+            if (entry.e_type?.toLowerCase() === 'e') expense += Number(entry.e_amount)
+        })
+        const balance = income - expense
+
+        await supabase
+            .from('LOG')
+            .update({
+                total_income: income,
+                total_expense: expense,
+                total_balance: balance
+            })
+            .eq('log_id', logId)
     }
 </script>

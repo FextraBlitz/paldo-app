@@ -89,6 +89,7 @@
     const toast = useToast()
     const loading = ref(false)
     const categories = ref<any[]>([])
+    const currentLogId = ref<string | null>(null)
 
     const editForm = ref({
         entry_id: '',
@@ -117,6 +118,7 @@
         const { data: logData } = await supabase.from('LOG').select('log_id').eq('user_id', user.id).single()
 
         if (logData) {
+            currentLogId.value = logData.log_id
             const { data: cats } = await supabase
                 .from('CATEGORY')
                 .select('category_id, c_name, c_color, c_icon')
@@ -152,6 +154,7 @@
                 e_date: `${editForm.value.e_date}:00` 
             })
             .eq('entry_id', editForm.value.entry_id)
+        if (!error && currentLogId.value) await updateLogTotals(currentLogId.value)
 
         loading.value = false
 
@@ -176,5 +179,31 @@
             isOpen.value = false
             emit('updated')  
         }
+    }
+
+    async function updateLogTotals(logId: string) {
+        const { data: allEntries } = await supabase
+            .from('ENTRY')
+            .select('e_type, e_amount')
+            .eq('log_id', logId)
+
+        if (!allEntries) return
+
+        let income = 0
+        let expense = 0
+        allEntries.forEach((entry: any) => {
+            if (entry.e_type?.toLowerCase() === 'i') income += Number(entry.e_amount)
+            if (entry.e_type?.toLowerCase() === 'e') expense += Number(entry.e_amount)
+        })
+        const balance = income - expense
+
+        await supabase
+            .from('LOG')
+            .update({
+                total_income: income,
+                total_expense: expense,
+                total_balance: balance
+            })
+            .eq('log_id', logId)
     }
 </script>
