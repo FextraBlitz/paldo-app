@@ -2,7 +2,15 @@
     <header class="bg-white border-b px-4 py-3 flex items-center justify-between sticky top-0 z-10">
         <template v-if="!isSearchOpen">
             <img src="~/assets/logo.png" alt="Paldo Logo" class="h-8" />
-            <UButton variant="ghost" icon="i-lucide-search" color="error" @click="isSearchOpen = true" />
+            
+            <UButton 
+                v-if="isSummaryPage" 
+                variant="ghost" 
+                icon="i-lucide-search" 
+                color="error" 
+                @click="isSearchOpen = true" 
+            />
+            <div v-else class="w-8"></div>
         </template>
 
         <template v-else>
@@ -34,6 +42,13 @@
     import { ref } from 'vue'
     const searchQuery = defineModel<string>({ default: '' })
     const isSearchOpen = ref(false)
+    const route = useRoute()
+
+    const isSummaryPage = computed(() => route.path === '/' || route.path === '/summary')
+
+    watch(() => route.path, () => {
+        closeSearch()
+    })
 
     function closeSearch() {
         searchQuery.value = '' 

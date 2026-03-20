@@ -5,6 +5,7 @@
                 icon="i-lucide-plus"
                 size="xl"
                 color="error"
+                solid
                 class="rounded-full w-14 h-14 border-4 border-red-900 bg-red text-white flex items-center justify-center p-0"
             />
         </div>
@@ -182,6 +183,7 @@
                 category_id: newEntry.value.category_id,
                 e_date: `${newEntry.value.e_date}:00`
             })
+        if (!error) await updateLogTotals(logData.log_id)
 
         loading.value = false
 
@@ -208,5 +210,31 @@
             newEntry.value.e_amount = ''
             if (categories.value.length > 0) newEntry.value.category_id = categories.value[0].category_id
         }
+    }
+
+    async function updateLogTotals(logId: string) {
+        const { data: allEntries } = await supabase
+            .from('ENTRY')
+            .select('e_type, e_amount')
+            .eq('log_id', logId)
+
+        if (!allEntries) return
+
+        let income = 0
+        let expense = 0
+        allEntries.forEach((entry: any) => {
+            if (entry.e_type?.toLowerCase() === 'i') income += Number(entry.e_amount)
+            if (entry.e_type?.toLowerCase() === 'e') expense += Number(entry.e_amount)
+        })
+        const balance = income - expense
+
+        await supabase
+            .from('LOG')
+            .update({
+                total_income: income,
+                total_expense: expense,
+                total_balance: balance
+            })
+            .eq('log_id', logId)
     }
 </script>

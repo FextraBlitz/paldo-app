@@ -44,22 +44,6 @@
                 @updated="fetchCategories" 
             />
         </div>
-        <!--div class="fixed bottom-16 w-full grid grid-cols-3 bg-white border-t border-black text-center text-[10px] font-bold py-2 uppercase">
-            <div class="border-r border-black">
-                <div class="text-slate-500">Lifetime Expenses</div>
-                <div class="text-sm">₱ {{ (logData?.total_expense || 0).toFixed(2) }}</div>
-            </div>
-            <div class="border-r border-black">
-                <div class="text-slate-500">Lifetime Income</div>
-                <div class="text-sm">₱ {{ (logData?.total_income || 0).toFixed(2) }}</div>
-            </div>
-            <div>
-                <div class="text-slate-500">Lifetime Total</div>
-                <div class="text-sm" :class="(logData?.total_balance || 0) < 0 ? 'text-red-600' : 'text-black'">
-                    ₱ {{ (logData?.total_balance || 0).toFixed(2) }}
-                </div>
-            </div>
-        </div-->
         <Footer />
     </div>
 </template>
@@ -76,7 +60,6 @@
     const categories = ref<any[]>([])
     const isEditModalOpen = ref(false)
     const selectedCategory = ref<any>(null)
-    //const logData = ref<any>(null)
     
     const getDropdownItems = (category: any) => [
         [{
@@ -110,7 +93,6 @@
             .single()
 
         if (log) {
-            //logData.value = log
             const { data: cats } = await supabase
                 .from('CATEGORY')
                 .select('*')

@@ -4,7 +4,7 @@
             <NuxtLink 
                 to="/summary" 
                 active-class="bg-blue-700 font-bold" 
-                class="flex flex-col items-center justify-center gap-1 hover:bg-blue-500 transition-colors"
+                class="flex flex-col items-center justify-center gap-1 hover:bg-blue-300 transition-colors"
             >
                 <UIcon name="i-lucide-file-text" class="size-6" />
                 <span class="text-[12px]">Records</span>
@@ -13,7 +13,7 @@
             <NuxtLink 
                 to="/analysis" 
                 active-class="bg-blue-700 font-bold" 
-                class="flex flex-col items-center justify-center gap-1 hover:bg-blue-500 transition-colors"
+                class="flex flex-col items-center justify-center gap-1 hover:bg-blue-300 transition-colors"
             >
                 <UIcon name="i-lucide-pie-chart" class="size-6" />
                 <span class="text-[12px]">Analysis</span>
@@ -22,7 +22,7 @@
             <NuxtLink 
                 to="/goals" 
                 active-class="bg-blue-700 font-bold" 
-                class="flex flex-col items-center justify-center gap-1 hover:bg-blue-500 transition-colors"
+                class="flex flex-col items-center justify-center gap-1 hover:bg-blue-300 transition-colors"
             >
                 <UIcon name="i-lucide-notebook-pen" class="size-6" />
                 <span class="text-[12px]">Goals</span>
@@ -31,7 +31,7 @@
             <NuxtLink 
                 to="/categories" 
                 active-class="bg-blue-700 font-bold" 
-                class="flex flex-col items-center justify-center gap-1 hover:bg-blue-500 transition-colors"
+                class="flex flex-col items-center justify-center gap-1 hover:bg-blue-300 transition-colors"
             >
                 <UIcon name="i-lucide-tag" class="size-6" />
                 <span class="text-[12px]">Categories</span>
@@ -40,7 +40,7 @@
             <NuxtLink 
                 to="/profile" 
                 active-class="bg-blue-700 font-bold" 
-                class="flex flex-col items-center justify-center gap-1 hover:bg-blue-500 transition-colors"
+                class="flex flex-col items-center justify-center gap-1 hover:bg-blue-300 transition-colors"
             >
                 <UIcon name="i-lucide-user" class="size-6" />
                 <span class="text-[12px]">Profile</span>
