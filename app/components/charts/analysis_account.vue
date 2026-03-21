@@ -52,6 +52,7 @@
 import { Chart as ChartJS, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, LineController, BarElement, BarController } from 'chart.js'
 import { Line, Bar } from 'vue-chartjs'
 ChartJS.register(Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, LineController, BarElement, BarController )
+const user = useSupabaseUser() // assuming you already have this somewhere
 
 interface Props {
   category_data: {
@@ -240,7 +241,6 @@ const options = {
   }
 }
 
-const user = useSupabaseUser() // assuming you already have this somewhere
 const isSendingReport = ref(false)
 const hasData = computed(() => 
   props.entry_data?.totals?.length > 0 || 
@@ -258,7 +258,8 @@ const periodOptions = [
 const toast = useToast()
 
 const sendReport = async () => {
-  if (!user.value?.id || !user.value?.email) {
+  console.log(user.value?.sub)
+  if (!user.value?.sub || !user.value?.email) {
     toast.add({
       title: 'Error',
       description: 'You must be logged in to send a report',

@@ -187,6 +187,5 @@
     else currentDate.value = subDays(currentDate.value, 7)
     refreshEntries()
     refreshValues()
-    // console.log(entries.value)
   }
 </script>

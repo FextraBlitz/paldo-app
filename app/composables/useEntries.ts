@@ -22,7 +22,7 @@ export const useEntries = (startDate?: Ref<string | null>, endDate?: Ref<string 
       `)
       // Filter by the user_id inside the LOG table
       .eq('LOG.user_id', userId)
-      .order('e_date', { ascending: false })
+      .order('e_date', { ascending: true })
 
     // Apply date range filters if they exist
     if (startDate?.value) query = query.gte('e_date', startDate.value)
