@@ -6,6 +6,13 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase'
   ],
 
+  icon: {
+    provider: 'iconify',
+    clientBundle: {
+      scan: true, // Scans your components for icons like 'i-lucide-xxx'
+    },
+  },
+
   supabase: {
     url: process.env.SUPABASE_URL,
     key: process.env.SUPABASE_KEY,
