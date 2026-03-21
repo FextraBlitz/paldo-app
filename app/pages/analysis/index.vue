@@ -9,7 +9,7 @@
           <UButton variant="ghost" icon="i-lucide-chevron-right" size="md" color="error" @click="nextPeriod"/>
       </div>
       
-      <USelect @update:open="console.log(viewMode)" v-model="viewMode" trailing-icon="none" :items="filterOptions" :popper="{ placement: 'bottom-end' }" :ui="{trailing:'hidden', base:'pe-0.5 px-0.5 py-0.5 bg-transparent', content: 'w-fit bg-white', item: 'text-red-500'}">
+      <USelect v-model="viewMode" trailing-icon="none" :items="filterOptions" :popper="{ placement: 'bottom-end' }" :ui="{trailing:'hidden', base:'pe-0.5 px-0.5 py-0.5 bg-transparent', content: 'w-fit bg-white', item: 'text-red-500'}">
           <UButton variant="ghost" icon="i-lucide-list-filter" size="md" color="error" />
       </USelect>
     </section>
@@ -57,8 +57,7 @@
   import OverviewIncome from '~/components/charts/overview_income.vue';
   import FlowIncome from '~/components/charts/flow_income.vue';
   import FlowExpenses from '~/components/charts/flow_expenses.vue';
-  import AnalysisAccount from '~/components/charts/analysis_account.vue';
-  import type { SelectItem } from '@nuxt/ui'
+  import AnalysisAccount from '~/components/charts/analysis_account.vue'; 
 
   // const entries = ref<any[]>([])
   
@@ -125,12 +124,11 @@
     // console.log('categories', category_data.value)
   }
   
-  const filterOptions = ref<SelectItem[]>([
+  const filterOptions = [
     {label: 'Daily', value: 'daily'},
     {label: 'Weekly', value: 'weekly'},
     {label: 'Monthly', value: 'monthly'},
-    
-    ])
+  ]
 
 
   const dateRangeDisplay = computed(() => {

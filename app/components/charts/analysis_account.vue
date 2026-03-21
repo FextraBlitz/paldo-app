@@ -30,13 +30,16 @@
     </section>
     <!-- NEW: Report button section -->
     <div class="flex items-center justify-center gap-3 py-4 flex-wrap">
-      <USelectMenu
+      <USelect
         v-model="reportPeriod"
-        :options="periodOptions"
+        :items="periodOptions"
         placeholder="Select period"
+        :ui="{trailing:'', placeholder: 'text-slate-600', base:'rounded-none bg-transparent text-black', content: 'rounded-none bg-slate-200', item: 'text-black'}"
       />
       <UButton
-        color="primary"
+        style="--ui-color-primary-400: oklch(62.3% 0.214 259.815)"
+        class="ring-1 rounded-none ring-black justify-center text-white bg-blue-500 active:bg-blue-500! hover:bg-blue-700"
+        active-class="font-bold !bg-blue-700"
         :loading="isSendingReport"
         :disabled="isSendingReport || !hasData"
         @click="sendReport"
@@ -248,7 +251,7 @@ const hasData = computed(() =>
   props.entry_data?.expenses?.length > 0
 )
 
-const reportPeriod = ref('last-30-days')
+const reportPeriod = ref<string>()
 const periodOptions = [
   { label: 'Last 7 days', value: 'last-7-days' },
   { label: 'Last 30 days', value: 'last-30-days' },
@@ -283,20 +286,40 @@ const sendReport = async () => {
 
   isSendingReport.value = true
 
+  const session = useSupabaseSession();
+  const accessToken = session.value?.access_token;
+
+  if (!accessToken) {
+    toast.add({ title: 'Error', description: 'Not logged in', color: 'error' });
+    return;
+  }
   try {
-    const res = await fetch('/api/report', {
+    const res = await fetch('http://localhost:8000/api/report', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        userId: user.value.id,
+        userId: user.value.sub,
         email: user.value.email,
-        period: 'last-30-days'   // ← you can make this dynamic later
+        period: reportPeriod.value,
+        accessToken: accessToken   // ← add this
       })
     })
 
-    const json = await res.json()
+    // ── NEW: Read raw text first ──
+    const rawText = await res.text()
+    console.log('Status:', res.status)
+    console.log('Raw response body:', rawText.substring(0, 400)) // first 400 chars
+
+    // Try to parse only if it looks like JSON
+    let json
+    try {
+      json = JSON.parse(rawText)
+    } catch (parseErr) {
+      console.error('Parse failed → not JSON:', parseErr)
+      throw new Error(`Server returned non-JSON: ${rawText.substring(0, 100)}...`)
+    }
 
     if (json.success) {
       toast.add({

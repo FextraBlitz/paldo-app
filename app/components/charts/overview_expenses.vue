@@ -2,11 +2,11 @@
   <div v-if="Object.keys(props.category_data.expenses).length === 0" class="flex flex-col h-64 justify-center items-center font-bold text-4xl">
     No data to show.
   </div>
-  <div class="flex flex-1 flex-col">
-    <div class="flex items-center justify-center aspect-square p-4 h-[25vh]">
+  <div class="flex flex-1 flex-col items-center">
+    <div class="flex items-center justify-center aspect-square p-4 h-[25vh] md:w-[40vw]">
       <Doughnut :data="data" :options="options"> </Doughnut>
     </div>
-    <div class="flex flex-col flex-1 min-h-0 overflow-y-scroll">
+    <div class="flex w-full flex-col flex-1 min-h-0 overflow-y-auto">
       <div class="flex h-16 border-t-2 last:border-b-2 items-center pl-2 " v-for="(category_value, category_name) in category_data.expenses">
         <UIcon :name="category_styles[category_name]?.icon" :style="{ color: category_styles[category_name]?.color }" class="text-4xl" />
         <div class="flex flex-col flex-1 p-2 pl-2 h-full">
