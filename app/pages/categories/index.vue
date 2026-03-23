@@ -1,6 +1,5 @@
 <template>
     <div class="min-h-screen bg-white pb-32">
-        <Header />
         <div class="bg-white border-b-2 border-slate-500 py-2 text-center text-sm font-bold uppercase text-slate-700">
             All Categories
         </div>
@@ -44,7 +43,6 @@
                 @updated="fetchCategories" 
             />
         </div>
-        <Footer />
     </div>
 </template>
 

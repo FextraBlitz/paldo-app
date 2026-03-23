@@ -1,6 +1,5 @@
 <template>
     <div class="min-h-screen bg-slate-50 pb-32">
-        <Header />
         <div class="flex flex-col items-center justify-center pt-20 pb-12 bg-white">
             <div class="w-32 h-32 rounded-full border-2 border-slate-200 flex items-center justify-center bg-slate-100 overflow-hidden mb-6 shadow-sm">
                 <img v-if="avatarUrl" :src="avatarUrl" class="w-full h-full object-cover" />
@@ -29,8 +28,6 @@
             </button>
 
         </div>
-
-        <Footer />
     </div>
 </template>
 

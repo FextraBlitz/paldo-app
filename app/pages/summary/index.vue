@@ -1,7 +1,5 @@
 <template>
     <div class="min-h-screen bg-white pb-32">
-        <Header v-model="searchQuery" />
-
         <div class="bg-white border-b flex items-center justify-center px-4 py-2 text-sm font-medium text-black">
             <div class="flex items-center gap-4">
                 <UButton variant="ghost" icon="i-lucide-chevron-left" size="md" color="error" @click="prevPeriod"/>
@@ -72,7 +70,7 @@
             </section>
         </main>
 
-        <div class="fixed bottom-16 w-full grid grid-cols-3 bg-white border-t border-t-slate-700 text-center text-[10px] font-bold py-2 uppercase">
+        <div class="fixed bottom-16 inset-x-0 max-w-[inherit] w-full grid grid-cols-3 bg-white border-t border-t-slate-700 text-center text-[10px] font-bold py-2 uppercase">
             <div class="border-r border-r-slate-700">
                 <div class="text-blue-500">Expenses</div>
                 <div class="text-sm text-red-500">₱ {{ periodExpenses.toFixed(2) }}</div>
@@ -89,7 +87,6 @@
             </div>
         </div>
 
-        <Footer />
         <AddEntry @created="fetchEntries" />
         <EditEntry 
             v-model:open="isEditModalOpen" 

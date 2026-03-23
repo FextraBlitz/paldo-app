@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-col min-h-screen bg-white pb-32 text-black">
-    <Header />
 
     <section class="bg-white border-b flex items-center justify-center px-4 py-2 text-sm font-medium text-black">
       <div class="flex items-center gap-4">
@@ -26,14 +25,14 @@
       <component :is="ChartComponents[activeChart]" :category_data="category_data" :entry_data="formatted_entries" ></component>
     </main>
 
-    <div class="fixed bottom-16 w-full grid grid-cols-3 bg-white border-t border-t-red-900 text-center text-[10px] font-bold py-2 uppercase">
+    <div class="fixed bottom-16 inset-x-0 max-w-[inherit] w-full grid grid-cols-3 bg-white border-t border-t-red-900 text-center text-[10px] font-bold py-2 uppercase">
       <div class="border-r border-red-900">
         <div class="text-blue-500">Expenses</div>
-        <div class="text-sm text-green-500">₱ {{ periodExpenses.toFixed(2) }}</div>
+        <div class="text-sm text-red-500">₱ {{ periodExpenses.toFixed(2) }}</div>
       </div>
       <div class="border-r border-red-900">
         <div class="text-blue-500">Income</div>
-        <div class="text-sm text-red-500">₱ {{ periodIncome.toFixed(2) }}</div>
+        <div class="text-sm text-green-500">₱ {{ periodIncome.toFixed(2) }}</div>
       </div>
       <div>
         <div class="text-blue-500">Total</div>
@@ -42,7 +41,6 @@
         </div>
       </div>
     </div>
-    <Footer />
     <AddEntry @created="refreshValues()" />
   </div>
 </template>
