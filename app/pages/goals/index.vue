@@ -251,7 +251,7 @@
                 title: 'Congratulations!',
                 description: 'Goal marked as completed.',
                 color: 'neutral',
-                ui: { root: 'bg-green-500 border-2 border-green-900', description: 'text-white' },
+                ui: { root: 'bg-blue-500 border-2 border-blue-900', description: 'text-white' },
                 close: { class: 'text-white' }
             })
             

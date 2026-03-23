@@ -2,7 +2,7 @@
   <div v-if="Object.keys(props.entry_data).length === 0" class="flex flex-col h-64 justify-center items-center font-bold text-4xl">
     No data to show.
   </div>
-  <div class="flex flex-1 flex-col">
+  <div v-else class="flex flex-1 flex-col">
     <div class="flex items-center justify-center aspect-square p-4 h-[25vh]">
       <Line :data="data" :options="options"> </Line>
     </div>
@@ -56,7 +56,8 @@ interface Props {
 }
 const props = defineProps<Props>()
 
-const dates = ref(new Set(props.entry_data.expenses.map((expense) => msToDay(expense.date.getTime()))))
+//const dates = ref(new Set(props.entry_data.expenses.map((expense) => msToDay(expense.date.getTime()))))
+const dates = computed(() => new Set(props.entry_data.expenses.map((expense) => msToDay(expense.date.getTime()))))
 const selectedDate = ref<DateValue>()
 const calendarRef = useTemplateRef<ComponentPublicInstance>('calendar-ref')
 
@@ -129,20 +130,24 @@ const popover_reference = computed(() => ({
     } as DOMRect)
 }))
 
+// const sorted_daily_expenses = computed(() => sortDailyEntries(sumOfDailyEntries(props.entry_data.expenses)))
+// const labels = Object.keys(sorted_daily_expenses.value).map((entry_date) => (new Date(parseInt(entry_date))).toLocaleString('en-US', {month: 'short', day:'2-digit'}));
 const sorted_daily_expenses = computed(() => sortDailyEntries(sumOfDailyEntries(props.entry_data.expenses)))
-const labels = Object.keys(sorted_daily_expenses.value).map((entry_date) => (new Date(parseInt(entry_date))).toLocaleString('en-US', {month: 'short', day:'2-digit'}));
-const data = {
-  labels: labels,
-  datasets: [
-    {
-      label: 'Expenses',
-      data: Object.values(sorted_daily_expenses.value),
-      fill: false,
-      borderColor: 'oklch(57.7% 0.245 27.325)',
-      tension: 0.1
-    },
-  ],
-};
+const data = computed(() => {
+  const labels = Object.keys(sorted_daily_expenses.value).map((entry_date) => (new Date(parseInt(entry_date))).toLocaleString('en-US', {month: 'short', day:'2-digit'}));
+  return {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Expenses',
+        data: Object.values(sorted_daily_expenses.value),
+        fill: false,
+        borderColor: 'oklch(57.7% 0.245 27.325)',
+        tension: 0.1
+      },
+    ],
+  };
+})
 
 const options = {
   responsive: true,

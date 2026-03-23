@@ -2,7 +2,7 @@
   <div v-if="Object.keys(props.entry_data).length === 0" class="flex flex-col h-64 justify-center items-center font-bold text-4xl">
     No data to show.
   </div>
-  <div class="flex flex-1 flex-col">
+  <div v-else class="flex flex-1 flex-col">
     <div class="flex items-center justify-center aspect-square p-4 h-[25vh]">
       <Line :data="data" :options="options"> </Line>
     </div>
@@ -56,7 +56,8 @@ interface Props {
 }
 const props = defineProps<Props>()
 
-const dates = ref(new Set(props.entry_data.income.map((income) => msToDay(income.date.getTime()))))
+//const dates = ref(new Set(props.entry_data.income.map((income) => msToDay(income.date.getTime()))))
+const dates = computed(() => new Set(props.entry_data.income.map((income) => msToDay(income.date.getTime()))))
 const selectedDate = ref<DateValue>()
 const calendarRef = useTemplateRef<ComponentPublicInstance>('calendar-ref')
 
@@ -89,20 +90,24 @@ const popover_reference = computed(() => ({
     } as DOMRect)
 }))
 
+//const sorted_daily_incomes = computed(() => sortDailyEntries(sumOfDailyEntries(props.entry_data.income)))
 const sorted_daily_incomes = computed(() => sortDailyEntries(sumOfDailyEntries(props.entry_data.income)))
-const labels = Object.keys(sorted_daily_incomes.value).map((entry_date) => (new Date(parseInt(entry_date))).toLocaleString('en-US', {month: 'short', day:'2-digit'}));
-const data = {
-  labels: labels,
-  datasets: [
-    {
-      label: 'Income',
-      data: Object.values(sorted_daily_incomes.value),
-      fill: false,
-      borderColor: 'oklch(62.3% 0.214 259.815)',
-      tension: 0.1
-    },
-  ],
-};
+//const labels = Object.keys(sorted_daily_incomes.value).map((entry_date) => (new Date(parseInt(entry_date))).toLocaleString('en-US', {month: 'short', day:'2-digit'}));
+const data = computed(() => {
+  const labels = Object.keys(sorted_daily_incomes.value).map((entry_date) => (new Date(parseInt(entry_date))).toLocaleString('en-US', {month: 'short', day:'2-digit'}));
+  return {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Income',
+        data: Object.values(sorted_daily_incomes.value),
+        fill: false,
+        borderColor: 'oklch(62.3% 0.214 259.815)',
+        tension: 0.1
+      },
+    ],
+  };
+})
 
 const options = {
   responsive: true,

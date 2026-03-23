@@ -6,8 +6,8 @@
     <div class="flex items-center justify-center aspect-square p-4 h-[25vh] md:w-[40vw]">
       <Doughnut :data="data" :options="options"> </Doughnut>
     </div>
-    <div class="flex w-full flex-col flex-1 min-h-0 overflow-y-auto">
-      <div class="flex h-16 border-t-2 last:border-b-2 items-center pl-2 " v-for="(category_value, category_name) in category_data.expenses">
+    <div class="flex w-full flex-col flex-1 min-h-0 overflow-y-auto p-1">
+      <div class="flex h-16 border-t-2 border-slate-400 items-center pl-2 py-1" v-for="(category_value, category_name) in category_data.expenses">
         <UIcon :name="category_styles[category_name]?.icon" :style="{ color: category_styles[category_name]?.color }" class="text-4xl" />
         <div class="flex flex-col flex-1 p-2 pl-2 h-full">
           <div class="font-bold">{{ category_name }}</div>  
@@ -17,12 +17,12 @@
             :max="expenses_sum"
             :ui="{
               root: 'flex-1',
-              base: 'rounded-none h-full',
+              base: 'rounded-xl h-full',
               indicator: 'rounded-none'
             }"
           />
         </div>
-        <div class="flex flex-col p-2 h-full w-24 border-l-2 border-l-black items-end justify-center">
+        <div class="flex flex-col p-2 h-full w-24 border-l-2 border-slate-200 items-end justify-center">
           <div class="text-red-500"> -₱ {{ category_value }} </div>
           <div> {{ (category_value/expenses_sum*100).toFixed(2) }}% </div>
         </div>

@@ -1,19 +1,26 @@
 <template>
   <div class="flex flex-col min-h-screen bg-white pb-32 text-black">
 
-    <section class="bg-white border-b flex items-center justify-center px-4 py-2 text-sm font-medium text-black">
+    <section class="bg-white border-b-2 border-slate-500 flex items-center justify-center px-4 py-2 text-sm font-medium text-black">
       <div class="flex items-center gap-4">
           <UButton variant="ghost" icon="i-lucide-chevron-left" size="md" color="error" @click="prevPeriod"/>
           <span class="w-60 text-center">{{ dateRangeDisplay }}</span>
           <UButton variant="ghost" icon="i-lucide-chevron-right" size="md" color="error" @click="nextPeriod"/>
       </div>
       
-      <USelect v-model="viewMode" trailing-icon="none" :items="filterOptions" :popper="{ placement: 'bottom-end' }" :ui="{trailing:'hidden', base:'pe-0.5 px-0.5 py-0.5 bg-transparent', content: 'w-fit bg-white', item: 'text-red-500'}">
-          <UButton variant="ghost" icon="i-lucide-list-filter" size="md" color="error" />
-      </USelect>
+      <UDropdownMenu
+        :items="filterOptions"
+        :popper="{ placement: 'bottom-end' }"
+        :ui="{ 
+          content: 'bg-white ring-0 border border-slate-300 shadow-lg rounded-md',
+          item: 'text-red-500 hover:text-red-500'
+        }"
+      >
+        <UButton variant="ghost" icon="i-lucide-list-filter" size="md" color="error" />
+      </UDropdownMenu>
     </section>
 
-    <section class="flex flex-wrap *:flex-1 *:min-w-[50%] *:ring-1 *:rounded-none *:ring-black *:justify-center *:text-white">
+    <section class="flex flex-wrap gap-2 m-1 p-2 *:flex-1 border-b border-slate-500 *:max-w-full *:min-w-[40%] *:ring-1 *:rounded-lg *:justify-center *:text-white">
       <UButton @click="switchChart('flow-income')" :active="activeChart === 'flow-income'" class="bg-blue-500 active:bg-blue-700 hover:bg-blue-700" active-class="font-bold !bg-blue-700"> INCOME FLOW </UButton>
       <UButton @click="switchChart('flow-expenses')" :active="activeChart === 'flow-expenses'" class="bg-blue-500 active:bg-blue-700 hover:bg-blue-700" active-class="font-bold !bg-blue-700"> EXPENSE FLOW </UButton>
       <UButton @click="switchChart('overview-income')" :active="activeChart === 'overview-income'" class="bg-blue-500 active:bg-blue-700 hover:bg-blue-700" active-class="font-bold !bg-blue-700"> INCOME OVERVIEW </UButton>
@@ -46,8 +53,6 @@
 </template>
 
 <script setup lang="ts">
-  import Header from '~/components/header.vue';
-  import Footer from '~/components/footer.vue';
   import AddEntry from '~/components/add_entry.vue'
   import { ref, computed } from 'vue'
   import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, eachDayOfInterval, addDays, subDays, addMonths, subMonths } from 'date-fns'
@@ -122,11 +127,13 @@
     // console.log('categories', category_data.value)
   }
   
-  const filterOptions = [
-    {label: 'Daily', value: 'daily'},
-    {label: 'Weekly', value: 'weekly'},
-    {label: 'Monthly', value: 'monthly'},
-  ]
+  const filterOptions = computed(() => [
+    [
+      { label: 'Daily', onSelect: () => { viewMode.value = 'daily'; refreshEntries() } },
+      { label: 'Weekly', onSelect: () => { viewMode.value = 'weekly'; refreshEntries() } },
+      { label: 'Monthly', onSelect: () => { viewMode.value = 'monthly'; refreshEntries() } }
+    ]
+  ])
 
 
   const dateRangeDisplay = computed(() => {

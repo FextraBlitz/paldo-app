@@ -8,18 +8,18 @@
       <Bar v-if="activeChart == 'total'" :data="bar_data" :options="options"> </Bar>
       
     </div>
-    <section class="flex flex-wrap *:flex-1 *:ring-1 *:rounded-none *:ring-black *:justify-center *:text-white">
+    <section class="flex flex-wrap px-2 py-1 gap-2 *:flex-1 *:ring-1 *:rounded-xl *:justify-center *:text-white">
       <UButton @click="switchChart('total')" :active="activeChart === 'total'" class="bg-blue-500 active:bg-blue-600 hover:bg-blue-600" active-class="font-bold !bg-blue-600"> TOTAL </UButton>
       <UButton @click="switchChart('time')" :active="activeChart === 'time'" class="bg-blue-500 active:bg-blue-600 hover:bg-blue-600" active-class="font-bold !bg-blue-600"> TIME </UButton>
     </section>
-    <section class="flex *:flex-1 *:ring-1 *:rounded-none *:ring-black *:justify-center *:text-white">
+    <section class="flex *:flex-1 px-2 py-1 gap-2 *:ring-1 *:rounded-xl *:justify-center *:text-white">
       <UButton @click="switchScale('expenses')" :active="activeScales.has('expenses')" class="bg-blue-500 active:bg-blue-600 hover:bg-blue-600" active-class="font-bold !bg-blue-600"> EXPENSES </UButton>
       <UButton @click="switchScale('totals')" :active="activeScales.has('totals')" class="bg-blue-500 active:bg-blue-600 hover:bg-blue-600" active-class="font-bold !bg-blue-600"> TOTAL </UButton>
       <UButton @click="switchScale('income')" :active="activeScales.has('income')" class="bg-blue-500 active:bg-blue-600 hover:bg-blue-600" active-class="font-bold !bg-blue-600"> INCOME </UButton>
     </section>
-    <section class="flex justify-center gap-4 py-3 border-b border-black text-[10px] font-bold uppercase">
+    <section class="flex justify-center gap-4 mx-2 py-3 border-b border-slate-300 text-[10px] font-bold uppercase">
       <div 
-        v-for="scale in ['income', 'total', 'expenses']" 
+        v-for="scale in ['income', 'totals', 'expenses']" 
         :key="scale"
         class="flex items-center gap-1 transition-opacity duration-200"
         :class="activeScales.has(scale as scaleMode) ? 'opacity-100' : 'opacity-20'"
@@ -34,11 +34,17 @@
         v-model="reportPeriod"
         :items="periodOptions"
         placeholder="Select period"
-        :ui="{trailing:'', placeholder: 'text-slate-600', base:'rounded-none bg-transparent text-black', content: 'rounded-none bg-slate-200', item: 'text-black'}"
+        :ui="{
+          trailing:'',
+          placeholder: 'text-slate-600',
+          base:'rounded-md bg-transparent text-black hover:bg-slate-100',
+          content: 'rounded-sm bg-slate-100 ring-slate-400',
+          item: 'text-black checked:bg-red-200'
+          }"
       />
       <UButton
         style="--ui-color-primary-400: oklch(62.3% 0.214 259.815)"
-        class="ring-1 rounded-none ring-black justify-center text-white bg-blue-500 active:bg-blue-500! hover:bg-blue-700"
+        class="ring-1 rounded-xl ring-blue-700 justify-center text-white bg-blue-500 active:bg-blue-500! hover:bg-blue-700 uppercase"
         active-class="font-bold !bg-blue-700"
         :loading="isSendingReport"
         :disabled="isSendingReport || !hasData"
@@ -261,8 +267,11 @@ const periodOptions = [
 const toast = useToast()
 
 const sendReport = async () => {
-  console.log(user.value?.sub)
-  if (!user.value?.sub || !user.value?.email) {
+  // 1. FIX: Supabase uses user.value.id, not user.value.sub!
+  const userId = user.value?.id || user.value?.sub; 
+  console.log('User ID:', userId);
+
+  if (!userId || !user.value?.email) {
     toast.add({
       title: 'Error',
       description: 'You must be logged in to send a report',
@@ -291,8 +300,10 @@ const sendReport = async () => {
 
   if (!accessToken) {
     toast.add({ title: 'Error', description: 'Not logged in', color: 'error' });
+    isSendingReport.value = false; // Stop the loading spinner
     return;
   }
+  
   try {
     const res = await fetch('/api/report', {
       method: 'POST',
@@ -300,19 +311,17 @@ const sendReport = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        userId: user.value.sub,
+        userId: userId, // Using the corrected ID here
         email: user.value.email,
         period: reportPeriod.value,
-        accessToken: accessToken   // ← add this
+        accessToken: accessToken 
       })
     })
 
-    // ── NEW: Read raw text first ──
     const rawText = await res.text()
     console.log('Status:', res.status)
-    console.log('Raw response body:', rawText.substring(0, 400)) // first 400 chars
+    console.log('Raw response body:', rawText.substring(0, 400)) 
 
-    // Try to parse only if it looks like JSON
     let json
     try {
       json = JSON.parse(rawText)
@@ -332,19 +341,24 @@ const sendReport = async () => {
       
     } else {
       console.error('Report error:', json)
+      
+      // 2. FIX: Intelligently extract the actual error message!
+      // This stops it from just printing "true" and looks for the real message.
+      const errorMessage = json.message || json.statusMessage || (typeof json.error === 'string' ? json.error : JSON.stringify(json.error)) || 'Unknown error';
+
       toast.add({
         title: 'Error',
-        description: 'Failed to send report: ' + (json.error || 'Unknown error'),
+        description: 'Failed to send report: ' + errorMessage,
         color: 'neutral',
         ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
         close: {class: 'text-white'}
       })
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error('Fetch error:', err)
     toast.add({
       title: 'Error',
-      description: 'Error connecting to report service',
+      description: err.message || 'Error connecting to report service',
       color: 'neutral',
       ui: {root: 'bg-red-500 border-2 border-red-900', description: 'text-white'},
       close: {class: 'text-white'}
