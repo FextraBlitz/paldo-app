@@ -1,6 +1,6 @@
 <template>
-    <div class="fixed bottom-0 w-full z-30 flex flex-col">
-        <nav class="grid grid-cols-5 bg-blue-500 h-16 text-white">
+    <div class="fixed bottom-0 inset-x-0 mx-auto max-w-[inherit] w-full z-30 flex flex-col">
+        <nav class="grid grid-cols-5 bg-blue-500 h-16 text-white shadow-lg">
             <NuxtLink 
                 to="/summary" 
                 active-class="bg-blue-700 font-bold" 

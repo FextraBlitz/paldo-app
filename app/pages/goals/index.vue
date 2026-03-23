@@ -1,6 +1,5 @@
 <template>
     <div class="min-h-screen bg-white pb-40">
-        <Header />
 
         <div class="bg-white border-b-2 border-slate-500 py-2 text-center text-sm font-bold uppercase text-slate-700">
             <h2 class="text-sm font-bold text-gray-700">CURRENT GOALS</h2>
@@ -81,7 +80,7 @@
         </div>
         <AddGoal v-model:open="isAddGoalOpen" @created="fetchGoals" />
 
-        <div class="fixed bottom-16 w-full grid grid-cols-3 bg-white border-t border-slate-700 text-center text-[10px] font-bold py-2 uppercase">
+        <div class="fixed bottom-16 inset-x-0 max-w-[inherit] w-full grid grid-cols-3 bg-white border-t border-slate-700 text-center text-[10px] font-bold py-2 uppercase">
             <div class="border-r border-r-slate-700">
                 <div class="text-blue-500">Expenses</div>
                 <div class="text-sm font-bold text-red-500">₱ {{ formatCurrency(totalExpense) }}</div> 
@@ -125,8 +124,6 @@
                 </UCard>
             </template>
         </UModal>
-
-        <Footer />
     </div>
 </template>
 

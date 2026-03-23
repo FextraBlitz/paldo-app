@@ -1,5 +1,5 @@
 <template>
-    <header class="bg-white border-b px-4 py-3 flex items-center justify-between sticky top-0 z-10">
+    <header class="inset-x-0 max-w-screen w-full bg-white border-b px-4 py-3 flex items-center justify-between sticky top-0 z-10">
         <template v-if="!isSearchOpen">
             <img src="~/assets/logo.png" alt="Paldo Logo" class="h-8" />
             
