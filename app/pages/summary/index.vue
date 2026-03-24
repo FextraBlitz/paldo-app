@@ -33,9 +33,9 @@
                     >
                         <div 
                             class="flex items-center justify-center w-8 h-8 rounded-full"
-                            :style="{ backgroundColor: entry.CATEGORY?.c_color || 'slategray' }"
+                            :style="{ backgroundColor: category_styles.value?.color || 'slategray' }"
                         >
-                            <UIcon :name="entry.CATEGORY?.c_icon || 'i-game-icons-two-coins'" class="w-7.5 h-7.5 text-white" />
+                            <UIcon :name="category_styles.value?.icon || 'i-game-icons-two-coins'" class="w-7.5 h-7.5 text-white" />
                         </div>
                         <div class="flex-1">
                             <div class="font-bold text-slate-700 leading-tight">
@@ -87,16 +87,16 @@
             </div>
         </div>
 
-        <AddEntry @created="fetchEntries" />
+        <AddEntry @created="refreshEntries" />
         <EditEntry 
             v-model:open="isEditModalOpen" 
             :entry="selectedEntry" 
-            @updated="fetchEntries" 
+            @updated="refreshEntries" 
         />
         <DeleteEntry 
             v-model:open="isDeleteModalOpen" 
             :entry="selectedEntry" 
-            @deleted="fetchEntries" 
+            @deleted="refreshEntries" 
         />
     </div>
 </template>
@@ -111,13 +111,18 @@
     import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, eachDayOfInterval, addDays, subDays, addMonths, subMonths } from 'date-fns'
 
     const supabase = useSupabaseClient()
-    const entries = ref<any[]>([])
+    // const entries = ref<any[]>([])
     const currentDate = ref(new Date())
     const viewMode = ref('weekly')
     const searchQuery = ref('')
     const isEditModalOpen = ref(false)
     const isDeleteModalOpen = ref(false)
     const selectedEntry = ref<any>(null)
+
+    const { data: entries, pending: pendingEntries, refresh: refreshEntries } = useEntries()
+    const { styles: category_styles, refresh: refreshStyles, pending: pendingCategoryStyles } = useCategoryStyles()
+    const loading_states = useLoadingStates()
+    watch(pendingEntries, () => {loading_states.states.value['entries']=pendingEntries.value})
 
     const filterOptions = [
         [
@@ -149,8 +154,9 @@
     ]
 
     const filteredEntries = computed(() => {
-        if (!searchQuery.value) return entries.value
-        
+        if (!searchQuery.value) return entries.value ?? []
+        if (!entries.value) return []
+
         const query = searchQuery.value.toLowerCase()
         
         return entries.value.filter(entry => {
@@ -158,35 +164,6 @@
             return categoryName.toLowerCase().includes(query)
         })
     })
-
-    onMounted(() => {
-        fetchEntries()
-    })
-
-    async function fetchEntries() {
-        const { data, error } = await supabase
-            .from('ENTRY')
-            .select(`
-                entry_id,
-                e_type,
-                e_amount,
-                e_date,
-                category_id,
-                CATEGORY (c_name, c_color, c_icon)
-            `)
-            .order('e_date', { ascending: false })
-
-        if (error) {
-            console.error('Error fetching entries:', error.message)
-            return
-        }
-
-        if (data) {
-            entries.value = data
-        }
-
-        console.log('Fetched Data:', data)
-    }
 
     function getEntriesForDay(day: Date) {
         const dateString = format(day, 'yyyy-MM-dd')

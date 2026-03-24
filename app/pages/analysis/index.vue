@@ -103,6 +103,9 @@
   const { data: category_data } = useCategorySums(startDate, endDate)
   const { data: formatted_entries } = useFormattedEntries(startDate, endDate)
   
+  const loading_states = useLoadingStates()
+  watch(pendingEntries, () => {loading_states.states.value['entries']=pendingEntries.value})
+  
   console.log('rawr', category_data.value)
 
   type viewModes = 'overview-expenses' | 'overview-income' | 'flow-expenses' | 'flow-income' | 'analysis-account'

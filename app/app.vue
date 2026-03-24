@@ -1,4 +1,30 @@
 <script setup lang="ts">
+        import { ref, onMounted } from 'vue'
+        import { useRouter } from 'vue-router'
+        import SplashScreen from '~/components/splash.vue'
+        const loading_states = useLoadingStates()
+
+        const router = useRouter()
+        const isSplashLoading = ref(false)
+
+        //   onMounted(() => {
+        //       const hasVisitedBefore = localStorage.getItem('hasVisited')
+        //       const isLoggedIn = sessionStorage.getItem('isLoggedIn')
+
+        //       if (hasVisitedBefore) {
+        //           setTimeout(() => {
+        //               isSplashLoading.value = false
+        //               router.push('/summary')
+        //           }, 3000)
+        //       }
+        //       else {
+        //           localStorage.setItem('hasVisited', 'true')
+        //           setTimeout(() => {
+        //               isSplashLoading.value = false
+        //               router.push('/login')
+        //           }, 3000)
+        //       }
+        //     })
     import { computed } from 'vue'
     const route = useRoute()
 
@@ -12,6 +38,8 @@
 <template>
     <ClientOnly>
         <UApp :toaster="{ position: 'bottom-center' }">
+            <SplashScreen v-if="loading_states.isLoading()" />
+            <!-- <NuxtPage v-else /> -->
             <div class="min-h-screen flex flex-col items-center bg-white">
                 
                 <Header v-if="showHeader" />

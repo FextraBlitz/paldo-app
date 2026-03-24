@@ -146,6 +146,10 @@
     const isConfirmCompleteOpen = ref(false)
     const goalToComplete = ref<string | null>(null)
 
+    
+    const loading_states = useLoadingStates()
+    watch(loading, () => {loading_states.states.value['goals']=loading.value})
+
     const processedGoals = computed(() => {
         let remainingBalance = totalBalance.value
         

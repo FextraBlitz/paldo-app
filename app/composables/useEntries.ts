@@ -35,7 +35,21 @@ export const useEntries = (startDate?: Ref<string | null>, endDate?: Ref<string 
       throw error
     }
 
-    return data || []
+    interface returnType {
+      entry_id: number
+      e_type: string
+      e_amount: number
+      e_date: string
+      log_id: number
+      CATEGORY: {
+        c_name: string
+      }
+      LOG: {
+        user_id:string
+      }
+    }
+
+    return data as returnType[] || []
   }, {
     // Watchers using getter functions to avoid TypeScript "WatchSource" errors
     watch: [

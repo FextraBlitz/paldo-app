@@ -66,13 +66,22 @@
 	import { reactive } from 'vue'
 
 	const supabase = useSupabaseClient()
+	const loading_states = useLoadingStates()
 	const toast = useToast()
 	const state = reactive({
 		email: '',
 		password: ''
 	})
 
+	const checkLoading = computed(() => {
+		loading_states
+		return 
+	})
+
+	const isLoading = ref(false)
+	watch(isLoading, ()=>{loading_states.states.value["account"] = isLoading.value})
 	async function onSubmit() {
+		isLoading.value = true
 		try {
 			const { data, error } = await supabase.auth.signInWithPassword({
 				email: state.email,
@@ -88,10 +97,12 @@
 				close: {class: 'text-white'}
 			})
 			localStorage.setItem('isLoggedIn', 'true')
+			isLoading.value = false
 			await navigateTo('/summary')
 
 		}
 		catch (error: any) {
+			isLoading.value = false
 			toast.add({
 				title: 'Login Failed',
 				description: error.message || 'Invalid email or password.',
@@ -101,7 +112,9 @@
 				close: {class: 'text-white'}
 			})
 		}
+		isLoading.value = false
 	}
+
 </script>
 
 <style scoped>
