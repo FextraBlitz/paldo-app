@@ -38,7 +38,7 @@
 <template>
     <ClientOnly>
         <UApp :toaster="{ position: 'bottom-center' }">
-            <SplashScreen v-if="loading_states.isLoading()" />
+            <SplashScreen v-if="false" />
             <!-- <NuxtPage v-else /> -->
             <div class="min-h-screen flex flex-col items-center bg-white">
                 
